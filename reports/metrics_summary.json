@@ -1,0 +1,23 @@
+{
+  "Decision Tree": {
+    "train_accuracy": 0.8212,
+    "test_accuracy": 0.7778,
+    "cv_mean": 0.776
+  },
+  "Random Forest": {
+    "train_accuracy": 0.8981,
+    "test_accuracy": 0.8056,
+    "cv_mean": 0.849
+  },
+  "KNN": {
+    "train_accuracy": 1.0,
+    "test_accuracy": 0.7056,
+    "cv_mean": 0.8135
+  },
+  "XGBoost": {
+    "train_accuracy": 0.9625,
+    "test_accuracy": 0.7778,
+    "cv_mean": 0.8548
+  },
+  "best_model": "XGBoost"
+}

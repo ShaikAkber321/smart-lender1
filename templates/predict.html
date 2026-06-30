@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Predict – Smart Lender</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <i class="fas fa-landmark"></i>
+    <span>Smart<strong>Lender</strong></span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+    <li><a href="/predict" class="active"><i class="fas fa-robot"></i> Predict</a></li>
+    <li><a href="/#about"><i class="fas fa-info-circle"></i> About</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-content">
+    <div class="section-tag">Loan Prediction</div>
+    <h1>Applicant Evaluation Form</h1>
+    <p>Fill in the applicant's details below. Our XGBoost model will predict creditworthiness instantly.</p>
+  </div>
+</div>
+
+<section class="form-section">
+  <div class="form-container">
+
+    <div class="form-progress">
+      <div class="progress-step active" data-step="1">
+        <div class="ps-icon"><i class="fas fa-user"></i></div>
+        <span>Personal</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" data-step="2">
+        <div class="ps-icon"><i class="fas fa-dollar-sign"></i></div>
+        <span>Financial</span>
+      </div>
+      <div class="progress-line"></div>
+      <div class="progress-step" data-step="3">
+        <div class="ps-icon"><i class="fas fa-home"></i></div>
+        <span>Loan Details</span>
+      </div>
+    </div>
+
+    <form action="/submit" method="POST" id="loanForm">
+
+      <div class="form-step" id="step-1">
+        <div class="form-step-header">
+          <h2><i class="fas fa-user-circle"></i> Personal Information</h2>
+          <p>Basic details of the loan applicant</p>
+        </div>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label><i class="fas fa-venus-mars"></i> Gender</label>
+            <div class="radio-group">
+              <label class="radio-card">
+                <input type="radio" name="Gender" value="Male" checked/>
+                <span><i class="fas fa-male"></i> Male</span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="Gender" value="Female"/>
+                <span><i class="fas fa-female"></i> Female</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-ring"></i> Marital Status</label>
+            <div class="radio-group">
+              <label class="radio-card">
+                <input type="radio" name="Married" value="Yes"/>
+                <span><i class="fas fa-heart"></i> Married</span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="Married" value="No" checked/>
+                <span><i class="fas fa-user"></i> Single</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dependents"><i class="fas fa-users"></i> Dependents</label>
+            <select name="Dependents" id="dependents" class="form-control">
+              <option value="0" selected>0 – No dependents</option>
+              <option value="1">1 dependent</option>
+              <option value="2">2 dependents</option>
+              <option value="3+">3+ dependents</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-graduation-cap"></i> Education</label>
+            <div class="radio-group">
+              <label class="radio-card">
+                <input type="radio" name="Education" value="Graduate" checked/>
+                <span><i class="fas fa-university"></i> Graduate</span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="Education" value="Not Graduate"/>
+                <span><i class="fas fa-school"></i> Not Graduate</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-briefcase"></i> Employment Type</label>
+            <div class="radio-group">
+              <label class="radio-card">
+                <input type="radio" name="Self_Employed" value="No" checked/>
+                <span><i class="fas fa-building"></i> Salaried</span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="Self_Employed" value="Yes"/>
+                <span><i class="fas fa-store"></i> Self-Employed</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+        <div class="form-nav">
+          <div></div>
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-step hidden" id="step-2">
+        <div class="form-step-header">
+          <h2><i class="fas fa-rupee-sign"></i> Financial Information</h2>
+          <p>Income and credit details of the applicant</p>
+        </div>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="applicant_income"><i class="fas fa-wallet"></i> Applicant Monthly Income (₹)</label>
+            <div class="input-with-icon">
+              <span class="input-prefix">₹</span>
+              <input type="number" id="applicant_income" name="ApplicantIncome"
+                     class="form-control" placeholder="e.g. 50000" min="0" required/>
+            </div>
+            <span class="form-hint">Monthly gross income of the primary applicant</span>
+          </div>
+
+          <div class="form-group">
+            <label for="coapplicant_income"><i class="fas fa-user-friends"></i> Co-Applicant Monthly Income (₹)</label>
+            <div class="input-with-icon">
+              <span class="input-prefix">₹</span>
+              <input type="number" id="coapplicant_income" name="CoapplicantIncome"
+                     class="form-control" placeholder="e.g. 0" min="0" value="0"/>
+            </div>
+            <span class="form-hint">Enter 0 if no co-applicant</span>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="credit_history"><i class="fas fa-history"></i> Credit History</label>
+            <div class="radio-group">
+              <label class="radio-card big">
+                <input type="radio" name="Credit_History" value="1" checked/>
+                <span>
+                  <i class="fas fa-check-circle green"></i>
+                  <strong>Good Credit</strong>
+                  <small>Has repaid past debts</small>
+                </span>
+              </label>
+              <label class="radio-card big">
+                <input type="radio" name="Credit_History" value="0"/>
+                <span>
+                  <i class="fas fa-times-circle red"></i>
+                  <strong>Poor / No Credit</strong>
+                  <small>No or bad credit history</small>
+                </span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+        <div class="form-nav">
+          <button type="button" class="btn btn-outline" onclick="prevStep(1)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(3)">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-step hidden" id="step-3">
+        <div class="form-step-header">
+          <h2><i class="fas fa-file-invoice-dollar"></i> Loan Details</h2>
+          <p>Loan amount, term, and property information</p>
+        </div>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="loan_amount"><i class="fas fa-money-bill-wave"></i> Loan Amount (₹ in thousands)</label>
+            <div class="input-with-icon">
+              <span class="input-prefix">₹K</span>
+              <input type="number" id="loan_amount" name="LoanAmount"
+                     class="form-control" placeholder="e.g. 150" min="1" required/>
+            </div>
+            <span class="form-hint">Enter amount in thousands (e.g., 150 = ₹1,50,000)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="loan_term"><i class="fas fa-calendar-alt"></i> Loan Term (Months)</label>
+            <select name="Loan_Amount_Term" id="loan_term" class="form-control">
+              <option value="12">12 months (1 year)</option>
+              <option value="36">36 months (3 years)</option>
+              <option value="60">60 months (5 years)</option>
+              <option value="84">84 months (7 years)</option>
+              <option value="120">120 months (10 years)</option>
+              <option value="180">180 months (15 years)</option>
+              <option value="240">240 months (20 years)</option>
+              <option value="300">300 months (25 years)</option>
+              <option value="360" selected>360 months (30 years)</option>
+              <option value="480">480 months (40 years)</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label><i class="fas fa-map-marked-alt"></i> Property Area</label>
+            <div class="radio-group three-cols">
+              <label class="radio-card">
+                <input type="radio" name="Property_Area" value="Urban"/>
+                <span><i class="fas fa-city"></i><strong>Urban</strong><small>Metro / City</small></span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="Property_Area" value="Semiurban" checked/>
+                <span><i class="fas fa-home"></i><strong>Semiurban</strong><small>Town / Suburb</small></span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="Property_Area" value="Rural"/>
+                <span><i class="fas fa-tree"></i><strong>Rural</strong><small>Village / Farmland</small></span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="summary-panel" id="summaryPanel">
+          <h4><i class="fas fa-clipboard-list"></i> Application Summary</h4>
+          <div class="summary-grid" id="summaryGrid"></div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn btn-outline" onclick="prevStep(2)">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+            <i class="fas fa-brain"></i> Predict Loan Status
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="form-sidebar">
+    <div class="sidebar-card">
+      <h4><i class="fas fa-info-circle"></i> Tips for Accuracy</h4>
+      <ul>
+        <li><i class="fas fa-check"></i> Enter accurate income figures</li>
+        <li><i class="fas fa-check"></i> Credit history is the strongest predictor</li>
+        <li><i class="fas fa-check"></i> Semiurban properties have higher approval rates</li>
+        <li><i class="fas fa-check"></i> Co-applicant income improves eligibility</li>
+      </ul>
+    </div>
+    <div class="sidebar-card model-card">
+      <h4><i class="fas fa-trophy"></i> Best Model</h4>
+      <div class="model-badge-large">XGBoost</div>
+      <div class="model-stats">
+        <div><span>Train Accuracy</span><strong>94.7%</strong></div>
+        <div><span>Test Accuracy</span><strong>81.1%</strong></div>
+        <div><span>CV Folds</span><strong>5-Fold</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/predict.js') }}"></script>
+</body>
+</html>

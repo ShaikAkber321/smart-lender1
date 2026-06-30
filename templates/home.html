@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Lender – AI Loan Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <i class="fas fa-landmark"></i>
+    <span>Smart<strong>Lender</strong></span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/" class="active"><i class="fas fa-home"></i> Home</a></li>
+    <li><a href="/predict"><i class="fas fa-robot"></i> Predict</a></li>
+    <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge"><i class="fas fa-shield-alt"></i> AI-Powered Credit Intelligence</div>
+    <h1>Smart <span class="gradient-text">Loan Decisions</span><br/>in Seconds</h1>
+    <p class="hero-subtitle">
+      Leverage XGBoost machine learning to evaluate creditworthiness with
+      <strong>{{ train_acc }}% training</strong> and <strong>{{ test_acc }}% testing</strong> accuracy.
+      Built for banks, NBFCs, and financial analysts.
+    </p>
+    <div class="hero-actions">
+      <a href="/predict" class="btn btn-primary">
+        <i class="fas fa-rocket"></i> Start Predicting
+      </a>
+      <a href="#how-it-works" class="btn btn-outline">
+        <i class="fas fa-play-circle"></i> How It Works
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-pill"><i class="fas fa-brain"></i> {{ train_acc }}% Train Accuracy</div>
+      <div class="stat-pill"><i class="fas fa-check-circle"></i> {{ test_acc }}% Test Accuracy</div>
+      <div class="stat-pill"><i class="fas fa-bolt"></i> Real-Time Results</div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="card-float card-1">
+      <i class="fas fa-user-check"></i>
+      <span>Loan Approved</span>
+      <strong class="green">✓ 92% Confidence</strong>
+    </div>
+    <div class="card-float card-2">
+      <i class="fas fa-chart-line"></i>
+      <span>Credit Score</span>
+      <strong class="blue">Excellent</strong>
+    </div>
+    <div class="card-float card-3">
+      <i class="fas fa-shield-alt"></i>
+      <span>Risk Level</span>
+      <strong class="green">Low</strong>
+    </div>
+    <div class="hero-circle">
+      <i class="fas fa-landmark fa-4x"></i>
+    </div>
+  </div>
+</section>
+
+<!-- ── MODELS BANNER ── -->
+<section class="models-banner">
+  <p>Powered by</p>
+  <div class="model-badges">
+    <span><i class="fas fa-tree"></i> Decision Tree</span>
+    <span><i class="fas fa-seedling"></i> Random Forest</span>
+    <span><i class="fas fa-users"></i> KNN</span>
+    <span class="best"><i class="fas fa-trophy"></i> XGBoost ★ Best</span>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section" id="how-it-works">
+  <div class="section-header">
+    <div class="section-tag">Process</div>
+    <h2>How Smart Lender Works</h2>
+    <p>Three simple steps from application to decision</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-icon"><i class="fas fa-file-alt"></i></div>
+      <h3>Submit Details</h3>
+      <p>Enter applicant personal, financial, and property details through our intuitive form.</p>
+    </div>
+    <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-icon"><i class="fas fa-cogs"></i></div>
+      <h3>ML Analysis</h3>
+      <p>XGBoost model processes 11 features through our trained pipeline for instant evaluation.</p>
+    </div>
+    <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-icon"><i class="fas fa-poll-h"></i></div>
+      <h3>Instant Result</h3>
+      <p>Receive a clear Approved / Rejected verdict with confidence score for faster decisions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="section bg-light">
+  <div class="section-header">
+    <div class="section-tag">Features</div>
+    <h2>Why Choose Smart Lender?</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon purple"><i class="fas fa-brain"></i></div>
+      <h3>4 ML Models</h3>
+      <p>Decision Tree, Random Forest, KNN, and XGBoost evaluated. Best model auto-selected.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon blue"><i class="fas fa-balance-scale"></i></div>
+      <h3>SMOTE Balancing</h3>
+      <p>Synthetic Minority Oversampling prevents class-imbalance bias for fair predictions.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon green"><i class="fas fa-tachometer-alt"></i></div>
+      <h3>Real-Time API</h3>
+      <p>REST API endpoint available for programmatic access and banking system integration.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon orange"><i class="fas fa-shield-alt"></i></div>
+      <h3>Risk Detection</h3>
+      <p>Automatically flags high-risk applicants for further review, reducing NPAs.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon teal"><i class="fas fa-chart-bar"></i></div>
+      <h3>Model Insights</h3>
+      <p>Feature importance, confusion matrix, and cross-validation reports included.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon red"><i class="fas fa-cloud-upload-alt"></i></div>
+      <h3>IBM Cloud Ready</h3>
+      <p>Designed for IBM Cloud deployment with web access through any browser.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SCENARIOS ── -->
+<section class="section" id="about">
+  <div class="section-header">
+    <div class="section-tag">Use Cases</div>
+    <h2>Real-World Scenarios</h2>
+  </div>
+  <div class="scenarios-grid">
+    <div class="scenario-card approved">
+      <div class="scenario-icon"><i class="fas fa-fast-forward"></i></div>
+      <div class="scenario-badge approved-badge">Scenario 1</div>
+      <h3>Fast-Track Approval</h3>
+      <p>A salaried applicant with good credit history and stable income gets instant approval prediction — no manual review needed.</p>
+    </div>
+    <div class="scenario-card rejected">
+      <div class="scenario-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="scenario-badge rejected-badge">Scenario 2</div>
+      <h3>High-Risk Detection</h3>
+      <p>Irregular self-employment income + no credit history? The system flags it for deeper scrutiny before proceeding.</p>
+    </div>
+    <div class="scenario-card neutral">
+      <div class="scenario-icon"><i class="fas fa-layer-group"></i></div>
+      <div class="scenario-badge neutral-badge">Scenario 3</div>
+      <h3>Batch Evaluation</h3>
+      <p>Financial analysts evaluate multiple applicants during peak periods, cutting review time while maintaining compliance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="cta-content">
+    <h2>Ready to Modernise Loan Decisions?</h2>
+    <p>Start evaluating applicants instantly with AI-powered credit intelligence.</p>
+    <a href="/predict" class="btn btn-white">
+      <i class="fas fa-rocket"></i> Try the Predictor Now
+    </a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <i class="fas fa-landmark"></i> Smart<strong>Lender</strong>
+    </div>
+    <p>Built with Python · Flask · XGBoost · IBM Cloud</p>
+    <p class="footer-copy">© 2025 Smart Lender · Summer Internship Project</p>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

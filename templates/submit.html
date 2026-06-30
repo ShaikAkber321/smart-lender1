@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Result – Smart Lender</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <i class="fas fa-landmark"></i>
+    <span>Smart<strong>Lender</strong></span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+    <li><a href="/predict"><i class="fas fa-robot"></i> Predict</a></li>
+    <li><a href="/#about"><i class="fas fa-info-circle"></i> About</a></li>
+  </ul>
+</nav>
+
+{% if error %}
+<div class="result-page">
+  <div class="result-container">
+    <div class="result-card error-card">
+      <div class="result-icon error-icon">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <h2>Processing Error</h2>
+      <p>{{ error }}</p>
+      <a href="/predict" class="btn btn-primary">
+        <i class="fas fa-redo"></i> Try Again
+      </a>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="result-page">
+
+  {% if approved is defined and approved %}
+  <div class="confetti-container" id="confetti"></div>
+  {% endif %}
+
+  <div class="result-container">
+
+    <div class="result-card {% if approved is defined and approved %}approved-card{% else %}rejected-card{% endif %}">
+
+      <div class="result-icon {% if approved is defined and approved %}approved-icon{% else %}rejected-icon{% endif %}">
+        {% if approved is defined and approved %}
+          <i class="fas fa-check-circle"></i>
+        {% else %}
+          <i class="fas fa-times-circle"></i>
+        {% endif %}
+      </div>
+
+      <div class="result-status">
+        <h1>Loan {% if approved is defined and approved %}Approved{% else %}Rejected{% endif %}</h1>
+        <p class="result-subtitle">
+          {% if approved is defined and approved %}
+            Congratulations! The applicant meets the creditworthiness criteria.
+          {% else %}
+            The applicant does not meet current lending criteria. Further review recommended.
+          {% endif %}
+        </p>
+      </div>
+
+      {% set display_confidence = confidence|default(0) %}
+      <div class="confidence-section">
+        <div class="confidence-label">Approval Probability</div>
+        <div class="gauge-container">
+          <div class="gauge-bar">
+            <div class="gauge-fill {% if approved is defined and approved %}gauge-green{% else %}gauge-red{% endif %}"
+                 style="width: {{ display_confidence }}%;">
+            </div>
+          </div>
+          <div class="gauge-numbers">
+            <span>0%</span>
+            <span class="gauge-value">{{ display_confidence }}%</span>
+            <span>100%</span>
+          </div>
+        </div>
+        <div class="confidence-badge {% if approved is defined and approved %}conf-green{% else %}conf-red{% endif %}">
+          <i class="fas fa-brain"></i>
+          Model Confidence: {{ display_confidence }}%
+        </div>
+      </div>
+
+    </div>
+
+    <div class="detail-cards-row">
+
+      {% if result is defined and result and result.applicant is defined and result.applicant %}
+      <div class="detail-card">
+        <h3><i class="fas fa-user-circle"></i> Applicant Profile</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="di-label">Gender</span>
+            <span class="di-value">{{ result.applicant.Gender }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Married</span>
+            <span class="di-value">{{ result.applicant.Married }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Dependents</span>
+            <span class="di-value">{{ result.applicant.Dependents }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Education</span>
+            <span class="di-value">{{ result.applicant.Education }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Employment</span>
+            <span class="di-value">{% if result.applicant.Self_Employed == 'Yes' %}Self-Employed{% else %}Salaried{% endif %}</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Property Area</span>
+            <span class="di-value">{{ result.applicant.Property_Area }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <h3><i class="fas fa-rupee-sign"></i> Financial Details</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="di-label">Applicant Income</span>
+            <span class="di-value">₹{{ "{:,.0f}".format(result.applicant.ApplicantIncome) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Co-Applicant Income</span>
+            <span class="di-value">₹{{ "{:,.0f}".format(result.applicant.CoapplicantIncome) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Loan Amount</span>
+            <span class="di-value">₹{{ "{:,.0f}".format(result.applicant.LoanAmount * 1000) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Loan Term</span>
+            <span class="di-value">{{ result.applicant.Loan_Amount_Term|int }} months</span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Credit History</span>
+            <span class="di-value {% if result.applicant.Credit_History == '1' or result.applicant.Credit_History == 1.0 %}green{% else %}red{% endif %}">
+              {% if result.applicant.Credit_History == '1' or result.applicant.Credit_History == 1.0 %}
+                <i class="fas fa-check"></i> Good
+              {% else %}
+                <i class="fas fa-times"></i> Poor
+              {% endif %}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="di-label">Monthly EMI (est.)</span>
+            <span class="di-value">
+              ₹{{ "{:,.0f}".format((result.applicant.LoanAmount * 1000 * 0.008) | float) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="detail-card full-width">
+        <h3><i class="fas fa-user-circle"></i> Applicant Evaluation Profile</h3>
+        <div class="detail-grid">
+          {% if summary_rows is defined and summary_rows %}
+            {% for label, value in summary_rows %}
+            <div class="detail-item">
+              <span class="di-label">{{ label }}</span>
+              <span class="di-value">{{ value }}</span>
+            </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    {% if result is defined and result and result.applicant is defined and result.applicant %}
+    <div class="risk-card">
+      <h3><i class="fas fa-analytics"></i> Key Decision Factors</h3>
+      <div class="risk-factors">
+        <div class="risk-factor {% if result.applicant.Credit_History == '1' or result.applicant.Credit_History == 1.0 %}positive{% else %}negative{% endif %}">
+          <i class="fas {% if result.applicant.Credit_History == '1' or result.applicant.Credit_History == 1.0 %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+          <div>
+            <strong>Credit History</strong>
+            <span>{% if result.applicant.Credit_History == '1' or result.applicant.Credit_History == 1.0 %}Good repayment track record{% else %}No or poor credit history{% endif %}</span>
+          </div>
+        </div>
+        <div class="risk-factor {% if result.applicant.ApplicantIncome > 30000 %}positive{% else %}neutral{% endif %}">
+          <i class="fas {% if result.applicant.ApplicantIncome > 30000 %}fa-check-circle{% else %}fa-minus-circle{% endif %}"></i>
+          <div>
+            <strong>Income Level</strong>
+            <span>{% if result.applicant.ApplicantIncome > 50000 %}High income applicant{% elif result.applicant.ApplicantIncome > 30000 %}Moderate income{% else %}Low income – higher risk{% endif %}</span>
+          </div>
+        </div>
+        <div class="risk-factor {% if result.applicant.Education == 'Graduate' %}positive{% else %}neutral{% endif %}">
+          <i class="fas {% if result.applicant.Education == 'Graduate' %}fa-check-circle{% else %}fa-minus-circle{% endif %}"></i>
+          <div>
+            <strong>Education</strong>
+            <span>{{ result.applicant.Education }}</span>
+          </div>
+        </div>
+        <div class="risk-factor {% if result.applicant.Property_Area == 'Semiurban' %}positive{% elif result.applicant.Property_Area == 'Urban' %}positive{% else %}neutral{% endif %}">
+          <i class="fas fa-map-marker-alt"></i>
+          <div>
+            <strong>Property Area</strong>
+            <span>{{ result.applicant.Property_Area }} – {% if result.applicant.Property_Area == 'Rural' %}lower collateral value{% else %}good collateral value{% endif %}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="result-actions">
+      <a href="/predict" class="btn btn-primary">
+        <i class="fas fa-redo"></i> New Prediction
+      </a>
+      <button onclick="window.print()" class="btn btn-outline">
+        <i class="fas fa-print"></i> Print Report
+      </button>
+      <a href="/" class="btn btn-outline">
+        <i class="fas fa-home"></i> Back to Home
+      </a>
+    </div>
+
+    <div class="model-attribution">
+      <i class="fas fa-robot"></i>
+      Prediction powered by <strong>{{ model_name if model_name is defined and model_name else 'Machine Learning' }}</strong> model
+    </div>
+
+  </div>
+</div>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+const runEffects = () => {
+  const isApproved = '{{ approved }}' === 'True';
+  if (!isApproved) return;
+  
+  const c = document.getElementById('confetti');
+  if (!c) return;
+  const colors = ['#4ade80','#60a5fa','#f59e0b','#f472b6','#a78bfa'];
+  for (let i = 0; i < 80; i++) {
+    const d = document.createElement('div');
+    d.className = 'confetti-piece';
+    d.style.cssText = `left:${Math.random()*100}%;background:${colors[i%5]};
+      animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*2}s;
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};`;
+    c.appendChild(d);
+  }
+};
+document.addEventListener('DOMContentLoaded', runEffects);
+</script>
+</body>
+</html>
